@@ -180,3 +180,19 @@ CREATE TABLE stadium_detail_option (
 ```
 
 </details>
+
+### 5-2. DML (데이터 조작어)
+<details>
+<summary>-- 입력순서</summary>
+1. user_dummy.sql
+2. member_dummy.sql
+3. referee_dummy.sql
+4. referee_payment_dummy.sql
+5. matches_dummy.sql
+6. matches_apply_dummy.sql
+7. pom_vote_dummy.sql
+8. stadium_dummy.sql
+9. stadium_option_dummy.sql
+10. stadium_detail_option.sql
+📁 [DML 파일 바로가기](./SQL)
+</details>
