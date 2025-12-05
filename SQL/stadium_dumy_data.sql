@@ -1,4 +1,4 @@
-INSERT INTO stadium (stadium_id, stadium_name, location, capacity) VALUES
+INSERT INTO stadium (id, name, location, max_count) VALUES
 (1, '송파 풋살파크', '서울특별시 송파구 올림픽로', 40),
 (2, '강남 스포츠필드 풋살장', '서울특별시 강남구 테헤란로', 50),
 (3, '홍대 예술풋살장', '서울특별시 마포구 와우산로', 35),
