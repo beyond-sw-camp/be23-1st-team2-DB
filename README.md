@@ -46,16 +46,18 @@
 
 ---
 
-## 🗓️ 개발일정
-(https://github.com/beyond-sw-camp/be16-1st-pomon-porail/blob/main/images/pomon_WBS.pdf)
-![image](https://github.com/user-attachments/assets/e477754b-af8a-429b-a69b-df0f4c1c460b)
+## 🗓️ WBS
+
+https://docs.google.com/spreadsheets/d/1fIUSy4qkfBQxXwY54RJ-XUnWjjOReSNoq1BAZvF45AA/edit?gid=827308645#gid=827308645
+<img width="527" height="658" alt="Image" src="https://github.com/user-attachments/assets/8b4a3910-22db-4988-8472-34fe525e6707" />
 
 
 
 ---
 ## 📝 요구사항정의서
-https://docs.google.com/spreadsheets/d/1gdGj_EBp2M7_fcxvqu37rU1ii0QhVpNG5HjycodgGc8/edit?gid=933404418#gid=933404418
-![image](https://github.com/user-attachments/assets/d1dd0f56-9047-4fee-b7ca-0d79e3d4732e)
+
+https://docs.google.com/spreadsheets/d/1JPzOK-3ZNih2dvhaKj_woaxKXlj8aVoJJ0jWgI7P8M4/edit?gid=683578131#gid=683578131
+<img width="461" height="525" alt="Image" src="https://github.com/user-attachments/assets/96074871-bc80-424e-a767-4d24a159b762" />
 
 ---
 
