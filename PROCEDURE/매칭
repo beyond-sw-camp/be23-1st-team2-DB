@@ -1,0 +1,92 @@
+1.
+create
+    definer = root@localhost procedure 매칭신청(IN p_memberID bigint, IN p_matchID bigint, IN p_price int)
+BEGIN
+    DECLARE v_max_count INT DEFAULT 0;
+    DECLARE v_current_count INT DEFAULT 0;
+
+    -- 1) 경기 정원(max_count) 조회
+    SELECT s.max_count
+      INTO v_max_count
+    FROM matches m
+    JOIN stadium s ON s.ID = m.stadiumID
+    WHERE m.ID = p_matchID;
+
+    -- 2) 현재 해당 경기 신청 인원 조회
+    SELECT COUNT(*)
+      INTO v_current_count
+    FROM match_apply
+    WHERE matchesID = p_matchID;
+
+    -- 3) 정원 체크 후 신청 INSERT
+    IF v_current_count < v_max_count THEN
+        INSERT INTO match_apply (
+            memberID,
+            matchesID,
+            apply_price,
+            payment_time
+        )
+        VALUES (
+            p_memberID,
+            p_matchID,
+            p_price,
+            NOW()
+        );
+    ELSE
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '정원이 가득 찼습니다.';
+    END IF;
+
+END;
+
+
+
+
+2.매칭 취소 환불
+create
+    definer = root@localhost procedure 매칭신청취소(IN p_applyID bigint, IN p_memberID bigint)
+BEGIN
+    DECLARE v_matchID BIGINT;
+    DECLARE v_match_datetime DATETIME;
+    DECLARE v_now DATETIME;
+
+    SET v_now = NOW();
+
+
+    SELECT matchesID
+      INTO v_matchID
+    FROM match_apply
+    WHERE ID = p_applyID
+      AND memberID = p_memberID
+      AND refund_time IS NULL;
+
+    IF v_matchID IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '신청 내역이 없거나 이미 취소된 내역입니다.';
+    END IF;
+
+
+    SELECT CONCAT(m.date, ' ', m.time)
+      INTO v_match_datetime
+    FROM matches m
+    WHERE m.ID = v_matchID;
+
+
+    IF v_now >= DATE_SUB(v_match_datetime, INTERVAL 1 HOUR) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '경기 시작 1시간 전 이후에는 취소할 수 없습니다.';
+    END IF;
+
+
+    UPDATE match_apply
+       SET refund_time = v_now
+     WHERE ID = p_applyID;
+
+
+    UPDATE matches
+       SET member_count = member_count - 1
+     WHERE ID = v_matchID
+       AND member_count > 0;
+
+END;
+

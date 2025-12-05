@@ -1,0 +1,337 @@
+<details>
+<summary><b>회원</b></summary>
+
+--회원 등록
+
+DROP PROCEDURE IF EXISTS 회원등록;
+DELIMITER //
+create
+    definer = root@localhost procedure 회원등록(IN p_name varchar(255), IN p_email varchar(255), IN p_login_id varchar(255),
+                                            IN p_password varchar(255), IN p_phone varchar(255),
+                                            IN p_account varchar(255))
+BEGIN
+    START TRANSACTION;
+
+    INSERT INTO user (
+        name,
+        email,
+        login_id,
+        password,
+        phone_number,
+        status
+    ) VALUES (
+                 p_name,
+                 p_email,
+                 p_login_id,
+                 p_password,
+                 p_phone,
+                 'n'
+             );
+
+    INSERT INTO member (
+        userID,
+        account,
+        pomCount
+    ) VALUES (
+                 LAST_INSERT_ID(),
+                 p_account,
+                 0
+             );
+
+    COMMIT;
+END;
+
+DELIMITER ;
+
+
+
+
+<details>
+<summary><b>심판</b></summary>
+
+
+--심판 등록
+
+
+DROP PROCEDURE IF EXISTS 심판등록;
+DELIMITER //
+create
+    definer = root@localhost procedure 심판등록(IN p_name varchar(255), IN p_email varchar(255), IN p_login_id varchar(255),
+                                            IN p_password varchar(255), IN p_phone varchar(255),
+                                            IN p_certificate varchar(255), IN p_pay_account varchar(255),
+                                            IN p_fee_rate int)
+BEGIN
+    START TRANSACTION;
+
+    INSERT INTO user (
+        name,
+        email,
+        login_id,
+        password,
+        phone_number,
+        status
+    ) VALUES (
+                 p_name,
+                 p_email,
+                 p_login_id,
+                 p_password,
+                 p_phone,
+                 'n'
+             );
+
+    INSERT INTO referee (
+        userID,
+        certificate,
+        pay_account,
+        fee_rate
+    ) VALUES (
+                 LAST_INSERT_ID(),
+                 p_certificate,
+                 p_pay_account,
+                 p_fee_rate
+             );
+
+    COMMIT;
+END;
+
+DELIMITER ;
+
+
+
+
+--경기 open
+
+
+DROP PROCEDURE IF EXISTS 경기오픈;
+
+DELIMITER //
+create
+    definer = root@localhost procedure 경기오픈(IN p_referee_id bigint, IN p_stadium_id bigint, IN p_match_price int,
+                                            IN p_date date, IN p_time time, IN p_member_count int,
+                                            IN p_pom varchar(255))
+BEGIN
+    DECLARE v_count INT DEFAULT 0;
+
+    -- 심판 존재 확인
+    SELECT COUNT(*) INTO v_count
+    FROM referee
+    WHERE id = p_referee_id;
+
+    IF v_count = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '존재하지 않는 심판입니다.';
+    END IF;
+
+    -- 구장 존재 확인
+    SELECT COUNT(*) INTO v_count
+    FROM stadium
+    WHERE id = p_stadium_id;
+
+    IF v_count = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '존재하지 않는 구장입니다.';
+    END IF;
+
+    -- 같은 날짜·시간대 중복 경기 확인
+    SELECT COUNT(*) INTO v_count
+    FROM matches
+    WHERE refereeID = p_referee_id
+      AND date = p_date
+      AND time = p_time;
+
+    IF v_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '해당 심판은 이미 같은 시간대 경기가 존재합니다.';
+    END IF;
+
+    -- 신규 경기 생성
+    INSERT INTO matches(
+        stadiumID, refereeID, match_price,
+        date, time, member_count, POM, status
+    ) VALUES (
+                 p_stadium_id, p_referee_id, p_match_price,
+                 p_date, p_time, p_member_count, p_pom, '열림'
+             );
+
+    -- 생성된 match ID 반환
+    SELECT LAST_INSERT_ID() AS match_id;
+
+END;
+
+DELIMITER ;
+
+
+
+
+--심판급여 정산
+
+DELIMITER //
+
+CREATE PROCEDURE 심판정산입력(IN rID BIGINT)
+BEGIN
+    DECLARE fee INT;
+    DECLARE calcPayment INT;
+
+    -- 심판 수수료율 조회
+    SELECT fee_rate INTO fee
+    FROM referee
+    WHERE ID = rID;
+
+    -- 고정금액 20000원에서 수수료 계산
+    -- 수수료만큼 제외: payment = 20000 * (100 - fee_rate) / 100
+    SET calcPayment = ROUND(20000 * (100 - fee) / 100);
+
+    -- 정산 테이블에 저장
+    INSERT INTO referee_payment (refereeID, paymentDate, payment)
+    VALUES (rID, CURRENT_TIMESTAMP, calcPayment);
+END //
+
+DELIMITER ;
+
+
+
+
+<details>
+<summary><b>구장</b></summary>
+
+--구장등록
+
+
+DROP PROCEDURE IF EXISTS 구장등록;
+DELIMITER //
+
+CREATE PROCEDURE 구장등록(
+    IN p_name VARCHAR(255),
+    IN p_location VARCHAR(255),
+    IN p_condition TEXT,
+    IN p_max_count INT
+)
+BEGIN
+    DECLARE v_count INT DEFAULT 0;
+
+    -- 중복 구장명 확인
+    SELECT COUNT(*) INTO v_count
+    FROM stadium
+    WHERE name = p_name;
+
+    IF v_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '이미 존재하는 구장 이름입니다.';
+    END IF;
+
+    -- 신규 구장 생성
+    INSERT INTO stadium(name, location, condition_text, max_count)
+    VALUES (p_name, p_location, p_condition, p_max_count);
+
+    -- 생성된 stadium ID 반환
+    SELECT LAST_INSERT_ID() AS stadium_id;
+
+END //
+
+DELIMITER ;
+
+
+
+<details>
+<summary><b>경기</b></summary>
+
+--경기신청
+
+DELIMITER //
+
+CREATE PROCEDURE 경기신청(
+    IN p_member_id BIGINT,
+    IN p_matches_id BIGINT
+)
+BEGIN
+    DECLARE v_current_count INT DEFAULT 0;
+    DECLARE v_max_count INT DEFAULT 0;
+    DECLARE v_match_price INT;
+
+    -- 경기 존재 여부 확인 및 최대 인원, 가격 가져오기
+    SELECT max_count, match_price
+    INTO v_max_count, v_match_price
+    FROM matches
+    WHERE id = p_matches_id;
+
+    IF v_max_count IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '존재하지 않는 경기입니다.';
+    END IF;
+
+    -- 이미 신청했는지 확인
+    SELECT COUNT(*) INTO v_current_count
+    FROM match_apply
+    WHERE matchesID = p_matches_id
+      AND memberID = p_member_id
+      AND refund_time IS NULL;
+
+    IF v_current_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '이미 신청한 경기입니다.';
+    END IF;
+
+    -- 현재 신청 인원 확인
+    SELECT COUNT(*) INTO v_current_count
+    FROM match_apply
+    WHERE matchesID = p_matches_id
+      AND refund_time IS NULL;
+
+    -- 최대 인원 체크
+    IF v_current_count >= v_max_count THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '이미 최대 인원으로 신청이 불가능합니다.';
+    END IF;
+
+    -- 신청 진행
+    INSERT INTO match_apply(matchesID, memberID, apply_price, status)
+    VALUES(p_matches_id, p_member_id, v_match_price, '신청');
+
+    SELECT '신청 완료' AS result;
+
+END //
+
+DELIMITER ;
+
+
+--경기신청 불가
+
+
+DELIMITER //
+
+CREATE PROCEDURE 경기신청불가(
+    IN p_member_id BIGINT,
+    IN p_matches_id BIGINT
+)
+BEGIN
+    DECLARE v_current_count INT DEFAULT 0;
+    DECLARE v_max_count INT DEFAULT 0;
+
+    -- 경기 존재 여부 확인 및 최대 인원 가져오기
+    SELECT max_count
+    INTO v_max_count
+    FROM matches
+    WHERE id = p_matches_id;
+
+    IF v_max_count IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '존재하지 않는 경기입니다.';
+    END IF;
+
+    -- 현재 신청 인원 확인 (환불된 인원 제외)
+    SELECT COUNT(*) INTO v_current_count
+    FROM match_apply
+    WHERE matchesID = p_matches_id
+      AND refund_time IS NULL;
+
+    -- 최대 인원 초과 시 신청 불가
+    IF v_current_count >= v_max_count THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '이미 최대 인원으로 신청이 불가능합니다.';
+    END IF;
+
+    SELECT '신청 가능' AS result;
+
+END //
+
+DELIMITER ;
