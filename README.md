@@ -255,6 +255,7 @@ CREATE TABLE stadium_detail_option (
 
 <details>
 <summary><b>회원</b></summary>
+
 ```sql
 // 회원 등록
 
