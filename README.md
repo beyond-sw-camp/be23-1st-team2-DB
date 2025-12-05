@@ -2,10 +2,10 @@
 
 
  
-![Image](https://github.com/user-attachments/assets/99c4b35c-1719-4603-8914-5df2ed366d3f)
+<img width="512" height="512" alt="Image" src="https://github.com/user-attachments/assets/5b830226-ca50-4fd1-baa7-1692557ae018" />
  
 
-  ⚽ 풋살 매칭 DB 프로젝트 – Futsal-MatchDB 
+  ⚽ 풋살 매칭 DB 프로젝트 – MeetBall
 
 **팀명: FutFut**
 
