@@ -61,6 +61,7 @@ https://docs.google.com/spreadsheets/d/1fIUSy4qkfBQxXwY54RJ-XUnWjjOReSNoq1BAZvF4
 <img width="461" height="525" alt="Image" src="https://github.com/user-attachments/assets/96074871-bc80-424e-a767-4d24a159b762" />
 
 https://docs.google.com/spreadsheets/d/1JPzOK-3ZNih2dvhaKj_woaxKXlj8aVoJJ0jWgI7P8M4/edit?gid=683578131#gid=683578131
+
 ---
 
 ## 🔎 4. DB 모델링
