@@ -692,16 +692,16 @@ BEGIN
 
         -- 상태 업데이트
         UPDATE matches
-        SET status = '매칭 승인'
+        SET status = '승인'
         WHERE id = p_match_id
           AND status = '대기';
 
-        SELECT '매칭 성공' AS result, v_apply_count AS applied_people;
+        SELECT '성공' AS result, v_apply_count AS applied_people;
 
     ELSE
         -- 매칭 실패 처리
         UPDATE matches
-        SET status = '매칭 실패'
+        SET status = '취소'
         WHERE id = p_match_id
           AND status = '대기';
 
