@@ -2,7 +2,7 @@
 
 
  
- ![image](https://github.com/LittleNiddle/DB_Team_GH/issues/8#issue-3697335727)
+![Image](https://github.com/user-attachments/assets/99c4b35c-1719-4603-8914-5df2ed366d3f)
  
 
   ⚽ 풋살 매칭 DB 프로젝트 – Futsal-MatchDB 
@@ -23,8 +23,8 @@
 
 
 ### 💡 프로젝트 개요
-![image](https://github.com/user-attachments/assets/8d9130ff-da64-4526-8c65-6d2eb78897d8)
 
+![Image](https://github.com/user-attachments/assets/b6a3194e-fd45-4485-a676-d93afa98ec1c)
 
 잡한 풋살 경기 매칭 + 예약 + 정산 + 히스토리 관리를 DB 중심으로 처리할 수 있도록 설계된 플랫폼입니다.  
 사용자(회원)는 팀 없이도 경기에 신청/참여할 수 있고,  
