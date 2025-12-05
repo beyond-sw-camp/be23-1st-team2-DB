@@ -49,7 +49,7 @@
 ## 🗓️ WBS
 
 
-<img width="527" height="658" alt="Image" src="https://github.com/user-attachments/assets/8b4a3910-22db-4988-8472-34fe525e6707" />
+<img width="1313" height="1036" alt="image" src="https://github.com/user-attachments/assets/8f70fd2c-0489-4166-8c07-a08b0b641d72" />
 
 https://docs.google.com/spreadsheets/d/1fIUSy4qkfBQxXwY54RJ-XUnWjjOReSNoq1BAZvF45AA/edit?gid=827308645#gid=827308645
 
@@ -58,7 +58,7 @@ https://docs.google.com/spreadsheets/d/1fIUSy4qkfBQxXwY54RJ-XUnWjjOReSNoq1BAZvF4
 ## 📝 요구사항정의서
 
 
-<img width="461" height="525" alt="Image" src="https://github.com/user-attachments/assets/96074871-bc80-424e-a767-4d24a159b762" />
+<img width="1228" height="826" alt="image" src="https://github.com/user-attachments/assets/a58998d2-f7b6-49f0-b071-3bc3c063ff95" />
 
 https://docs.google.com/spreadsheets/d/1JPzOK-3ZNih2dvhaKj_woaxKXlj8aVoJJ0jWgI7P8M4/edit?gid=683578131#gid=683578131
 
