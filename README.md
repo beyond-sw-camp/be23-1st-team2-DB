@@ -26,9 +26,11 @@
 </p>
 
 
-### 💡 프로젝트 개요
+
 
 ![Image](https://github.com/user-attachments/assets/b6a3194e-fd45-4485-a676-d93afa98ec1c)
+
+### 💡 프로젝트 개요
 
 복잡한 풋살 경기 매칭 + 예약 + 정산 + 히스토리 관리를 DB 중심으로 처리할 수 있도록 설계된 플랫폼입니다.  
 
